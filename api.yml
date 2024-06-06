@@ -119,12 +119,8 @@ components:
       properties:
         width:
           type: integer
-          x-oapi-codegen-extra-tags:
-            validate: required,gte=1
         length:
           type: integer
-          x-oapi-codegen-extra-tags:
-            validate: required,gte=1
     CreateTreeRequest:
       type: object
       required:

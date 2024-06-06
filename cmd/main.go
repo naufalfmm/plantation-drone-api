@@ -5,7 +5,6 @@ import (
 
 	"github.com/naufalfmm/plantation-drone-api/generated"
 	"github.com/naufalfmm/plantation-drone-api/handler"
-	"github.com/naufalfmm/plantation-drone-api/helper"
 	"github.com/naufalfmm/plantation-drone-api/repository"
 
 	"github.com/labstack/echo/v4"
@@ -16,8 +15,6 @@ func main() {
 	e := echo.New()
 
 	var server generated.ServerInterface = newServer()
-
-	e.Validator = helper.NewValidator()
 
 	generated.RegisterHandlers(e, server)
 	e.Use(middleware.Logger())

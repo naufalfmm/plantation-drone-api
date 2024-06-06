@@ -29,6 +29,18 @@ func (s *Server) PostEstate(ctx echo.Context) error {
 		})
 	}
 
+	if req.Length <= 0 {
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
+			Message: ErrNegativeZeroBuilder("length").Error(),
+		})
+	}
+
+	if req.Width <= 0 {
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
+			Message: ErrNegativeZeroBuilder("width").Error(),
+		})
+	}
+
 	if err := ctx.Validate(req); err != nil {
 		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
 			Message: err.Error(),
