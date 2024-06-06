@@ -7,7 +7,6 @@ package repository
 import "context"
 
 type RepositoryInterface interface {
-	GetTestById(ctx context.Context, input GetTestByIdInput) (output GetTestByIdOutput, err error)
 	CreateEstate(ctx context.Context, input CreateEstateInput) (err error)
 	GetEstateById(ctx context.Context, input GetEstateByIdInput) (output GetEstateByIdOutput, err error)
 	CountCoordinateTree(ctx context.Context, input CountCoordinateTreeInput) (output CountCoordinateTreeOutput, err error)

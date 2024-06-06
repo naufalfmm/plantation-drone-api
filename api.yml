@@ -148,29 +148,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
-  /hello:
-    get:
-      summary: This is just a test endpoint to get you started.
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Test return
-          content:
-            application/json:    
-              schema:
-                $ref: "#/components/schemas/HelloResponse"
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     CreateEstateRequest:
@@ -196,14 +173,6 @@ components:
           type: integer
         height:
           type: integer
-    HelloResponse:
-      type: object
-      required:
-        - message
-      properties:
-        message:
-          type: string
-          example: Hello, World!
     UuidResponse:
       type: object
       required:

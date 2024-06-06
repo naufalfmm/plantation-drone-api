@@ -6,14 +6,6 @@ import (
 	"fmt"
 )
 
-func (r *Repository) GetTestById(ctx context.Context, input GetTestByIdInput) (output GetTestByIdOutput, err error) {
-	err = r.Db.QueryRowContext(ctx, "SELECT name FROM test WHERE id = $1", input.Id).Scan(&output.Name)
-	if err != nil {
-		return
-	}
-	return
-}
-
 func (r *Repository) CreateEstate(ctx context.Context, input CreateEstateInput) (err error) {
 	err = r.Db.QueryRowContext(ctx, `INSERT INTO estates (id, width, length, drone_distance, created_at, updated_at) VALUES ($1, $2, $3, $4, NOW(), NOW())`, input.Id, input.Width, input.Length, ((input.Length-1)*10*input.Width + (input.Width-1)*10 + 2)).Err()
 	if err != nil {
