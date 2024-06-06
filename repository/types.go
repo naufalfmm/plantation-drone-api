@@ -20,13 +20,14 @@ type GetEstateByIdInput struct {
 }
 
 type GetEstateByIdOutput struct {
-	Id     string
-	Width  int
-	Length int
-	Count  int
-	Max    int
-	Min    int
-	Median float64
+	Id            string
+	Width         int
+	Length        int
+	Count         int
+	Max           int
+	Min           int
+	Median        float64
+	DroneDistance int
 }
 
 type CountCoordinateTreeInput struct {

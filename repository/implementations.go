@@ -23,7 +23,7 @@ func (r *Repository) CreateEstate(ctx context.Context, input CreateEstateInput) 
 }
 
 func (r *Repository) GetEstateById(ctx context.Context, input GetEstateByIdInput) (output GetEstateByIdOutput, err error) {
-	err = r.Db.QueryRowContext(ctx, `SELECT id, width, length, count, max, min, median FROM estates WHERE id = $1`, input.Id).Scan(&output.Id, &output.Width, &output.Length, &output.Count, &output.Max, &output.Min, &output.Median)
+	err = r.Db.QueryRowContext(ctx, `SELECT id, width, length, count, max, min, median, drone_distance FROM estates WHERE id = $1`, input.Id).Scan(&output.Id, &output.Width, &output.Length, &output.Count, &output.Max, &output.Min, &output.Median, &output.DroneDistance)
 	if err != nil {
 		return
 	}

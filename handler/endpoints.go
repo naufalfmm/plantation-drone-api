@@ -208,3 +208,26 @@ func (s *Server) GetEstateIdStats(ctx echo.Context, id string) error {
 		Min:    est.Min,
 	})
 }
+
+// The endpoint of retrieving the estate drone plan
+// (GET /estate/{id}/drone-plan)
+func (s *Server) GetEstateIdDronePlan(ctx echo.Context, id string) error {
+	est, err := s.Repository.GetEstateById(ctx.Request().Context(), repository.GetEstateByIdInput{
+		Id: id,
+	})
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return ctx.JSON(http.StatusNotFound, generated.ErrorResponse{
+				Message: ErrNotFoundBuilder("estate").Error(),
+			})
+		}
+
+		return ctx.JSON(http.StatusInternalServerError, generated.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+
+	return ctx.JSON(http.StatusCreated, generated.EstateDronePlanResponse{
+		Distance: est.DroneDistance,
+	})
+}

@@ -98,11 +98,40 @@ paths:
           type: string
       responses:
         '200':
-          description: Successfully Created
+          description: Successfully Get
           content:
             application/json:    
               schema:
                 $ref: "#/components/schemas/EstateStatResponse"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /estate/{id}/drone-plan:
+    get:
+      summary: The endpoint of retrieving the estate drone plan
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully Get
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/EstateDronePlanResponse"
         '404':
           description: Not Found
           content:
@@ -195,6 +224,13 @@ components:
         median:
           type: number
           format: double
+    EstateDronePlanResponse:
+      type: object
+      required:
+        - distance
+      properties:
+        distance:
+          type: integer
     ErrorResponse:
       type: object
       required:
