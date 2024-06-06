@@ -54,7 +54,13 @@ paths:
         in: path
         required: true
         schema:
-          type: integer
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTreeRequest"
       responses:
         '201':
           description: Successfully Created
@@ -119,6 +125,19 @@ components:
           type: integer
           x-oapi-codegen-extra-tags:
             validate: required,gte=1
+    CreateTreeRequest:
+      type: object
+      required:
+        - x
+        - y
+        - height
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+        height:
+          type: integer
     HelloResponse:
       type: object
       required:

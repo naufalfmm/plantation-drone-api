@@ -14,3 +14,45 @@ type CreateEstateInput struct {
 	Width  int
 	Length int
 }
+
+type GetEstateByIdInput struct {
+	Id string
+}
+
+type GetEstateByIdOutput struct {
+	Id     string
+	Width  int
+	Length int
+}
+
+type CountCoordinateTreeInput struct {
+	X int
+	Y int
+}
+
+type CountCoordinateTreeOutput struct {
+	Count int
+}
+
+type CreateTreeInput struct {
+	Id     string
+	X      int
+	Y      int
+	Height int
+
+	EstateId        string
+	DroneDistFactor int
+}
+
+type GetPrevNextTreeInput struct {
+	PrevX int
+	PrevY int
+
+	NextX int
+	NextY int
+}
+
+type GetPrevNextTreeOutput struct {
+	PrevTreeHeight int
+	NextTreeHeight int
+}

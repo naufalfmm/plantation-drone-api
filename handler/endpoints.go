@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"database/sql"
 	"fmt"
+	"math"
 	"net/http"
 
 	"github.com/google/uuid"
@@ -47,5 +49,99 @@ func (s *Server) PostEstate(ctx echo.Context) error {
 
 	return ctx.JSON(http.StatusCreated, generated.UuidResponse{
 		Id: id,
+	})
+}
+
+// The endpoint of storing tree in specific point of the estate
+// (POST /estate/{id}/tree)
+func (s *Server) PostEstateIdTree(ctx echo.Context, id string) error {
+	var req generated.CreateTreeRequest
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+
+	if req.X <= 0 {
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
+			Message: ErrNegativeZeroBuilder("x").Error(),
+		})
+	}
+
+	if req.Y <= 0 {
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
+			Message: ErrNegativeZeroBuilder("y").Error(),
+		})
+	}
+
+	if req.Height <= 0 || req.Height > 30 {
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
+			Message: ErrHeightOutOfRange.Error(),
+		})
+	}
+
+	est, err := s.Repository.GetEstateById(ctx.Request().Context(), repository.GetEstateByIdInput{
+		Id: id,
+	})
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return ctx.JSON(http.StatusNotFound, generated.ErrorResponse{
+				Message: ErrNotFoundBuilder("estate").Error(),
+			})
+		}
+
+		return ctx.JSON(http.StatusInternalServerError, generated.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+
+	if req.X > est.Length || req.Y > est.Width {
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
+			Message: ErrCoordinateOutOfBound.Error(),
+		})
+	}
+
+	c, err := s.Repository.CountCoordinateTree(ctx.Request().Context(), repository.CountCoordinateTreeInput{
+		X: req.X,
+		Y: req.Y,
+	})
+	if c.Count > 0 {
+		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
+			Message: ErrTreeExist.Error(),
+		})
+	}
+
+	prevX, prevY, nextX, nextY := getPrevNextCoordinate(req.X, req.Y, est.Length)
+
+	prevNextHeights, err := s.Repository.GetPrevNextTree(ctx.Request().Context(), repository.GetPrevNextTreeInput{
+		PrevX: prevX,
+		PrevY: prevY,
+		NextX: nextX,
+		NextY: nextY,
+	})
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, generated.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+
+	treeId := uuid.New().String()
+	err = s.Repository.CreateTree(ctx.Request().Context(), repository.CreateTreeInput{
+		Id:     treeId,
+		X:      req.X,
+		Y:      req.Y,
+		Height: req.Height,
+
+		EstateId:        id,
+		DroneDistFactor: int(math.Abs(float64(req.Height)-float64(prevNextHeights.PrevTreeHeight)) + math.Abs(float64(req.Height)-float64(prevNextHeights.NextTreeHeight)) - float64(prevNextHeights.PrevTreeHeight) - float64(prevNextHeights.NextTreeHeight)),
+	})
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, generated.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+
+	return ctx.JSON(http.StatusCreated, generated.UuidResponse{
+		Id: treeId,
 	})
 }
