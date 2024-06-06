@@ -117,6 +117,11 @@ func (s *Server) PostEstateIdTree(ctx echo.Context, id string) error {
 		X: req.X,
 		Y: req.Y,
 	})
+	if err != nil {
+		return ctx.JSON(http.StatusInternalServerError, generated.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
 	if c.Count > 0 {
 		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
 			Message: ErrTreeExist.Error(),
