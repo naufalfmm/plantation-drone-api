@@ -162,3 +162,49 @@ func (s *Server) PostEstateIdTree(ctx echo.Context, id string) error {
 		Id: treeId,
 	})
 }
+
+// The endpoint of retrieving the estate stats, that are max, min, count, and median of trees
+// (GET /estate/{id}/stats)
+func (s *Server) GetEstateIdStats(ctx echo.Context, id string) error {
+	est, err := s.Repository.GetEstateById(ctx.Request().Context(), repository.GetEstateByIdInput{
+		Id: id,
+	})
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return ctx.JSON(http.StatusNotFound, generated.ErrorResponse{
+				Message: ErrNotFoundBuilder("estate").Error(),
+			})
+		}
+
+		return ctx.JSON(http.StatusInternalServerError, generated.ErrorResponse{
+			Message: err.Error(),
+		})
+	}
+
+	median := est.Median
+	if median == 0 {
+
+		treeHeights, err := s.Repository.GetHeightEstateTrees(ctx.Request().Context(), repository.GetHeightEstateTreesInput{
+			EstateId: id,
+		})
+		if err != nil {
+			return ctx.JSON(http.StatusInternalServerError, generated.ErrorResponse{
+				Message: err.Error(),
+			})
+		}
+
+		median = findMedian(treeHeights.Heights)
+
+		go s.Repository.StoreMedianEstate(ctx.Request().Context(), repository.StoreMedianEstateInput{
+			EstateId: id,
+			Median:   median,
+		})
+	}
+
+	return ctx.JSON(http.StatusCreated, generated.EstateStatResponse{
+		Count:  est.Count,
+		Max:    est.Max,
+		Median: median,
+		Min:    est.Min,
+	})
+}

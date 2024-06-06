@@ -23,7 +23,7 @@ func (r *Repository) CreateEstate(ctx context.Context, input CreateEstateInput) 
 }
 
 func (r *Repository) GetEstateById(ctx context.Context, input GetEstateByIdInput) (output GetEstateByIdOutput, err error) {
-	err = r.Db.QueryRowContext(ctx, `SELECT id, width, length FROM estates WHERE id = $1`, input.Id).Scan(&output.Id, &output.Width, &output.Length)
+	err = r.Db.QueryRowContext(ctx, `SELECT id, width, length, count, max, min, median FROM estates WHERE id = $1`, input.Id).Scan(&output.Id, &output.Width, &output.Length, &output.Count, &output.Max, &output.Min, &output.Median)
 	if err != nil {
 		return
 	}
@@ -78,6 +78,7 @@ func (r *Repository) CreateTree(ctx context.Context, input CreateTreeInput) (err
 			max = CASE WHEN max < $1 THEN $1 ELSE max END,
 			min = CASE WHEN (min = 0 OR min > $1) THEN $1 ELSE min END,
 			drone_distance = drone_distance + $2,
+			median = 0,
 			updated_at = NOW()
 		WHERE id = $3
 	`, input.Height, input.DroneDistFactor, input.EstateId)
@@ -93,6 +94,34 @@ func (r *Repository) CreateTree(ctx context.Context, input CreateTreeInput) (err
 	}
 
 	err = tx.Commit()
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func (r *Repository) GetHeightEstateTrees(ctx context.Context, input GetHeightEstateTreesInput) (output GetHeightEstateTreesOutput, err error) {
+	rows, err := r.Db.QueryContext(ctx, `SELECT height FROM estate_trees WHERE estate_id = $1`, input.EstateId)
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		height := 0
+		err = rows.Scan(&height)
+		if err != nil {
+			return
+		}
+
+		output.Heights = append(output.Heights, height)
+	}
+
+	return
+}
+
+func (r *Repository) StoreMedianEstate(ctx context.Context, input StoreMedianEstateInput) (err error) {
+	err = r.Db.QueryRowContext(ctx, `UPDATE estates SET median = $1 WHERE id = $2`, input.Median, input.EstateId).Err()
 	if err != nil {
 		return
 	}

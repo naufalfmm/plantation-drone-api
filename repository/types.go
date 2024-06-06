@@ -23,6 +23,10 @@ type GetEstateByIdOutput struct {
 	Id     string
 	Width  int
 	Length int
+	Count  int
+	Max    int
+	Min    int
+	Median float64
 }
 
 type CountCoordinateTreeInput struct {
@@ -55,4 +59,17 @@ type GetPrevNextTreeInput struct {
 type GetPrevNextTreeOutput struct {
 	PrevTreeHeight int
 	NextTreeHeight int
+}
+
+type GetHeightEstateTreesInput struct {
+	EstateId string
+}
+
+type GetHeightEstateTreesOutput struct {
+	Heights []int
+}
+
+type StoreMedianEstateInput struct {
+	EstateId string
+	Median   float64
 }

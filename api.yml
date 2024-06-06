@@ -86,6 +86,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  
+  /estate/{id}/stats:
+    get:
+      summary: The endpoint of retrieving the estate stats, that are max, min, count, and median of trees
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successfully Created
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/EstateStatResponse"
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 
   /hello:
     get:
@@ -149,6 +178,23 @@ components:
       properties:
         id:
           type: string
+    EstateStatResponse:
+      type: object
+      required:
+        - count
+        - max
+        - min
+        - median
+      properties:
+        count:
+          type: integer
+        max:
+          type: integer
+        min:
+          type: integer
+        median:
+          type: number
+          format: double
     ErrorResponse:
       type: object
       required:

@@ -13,4 +13,6 @@ type RepositoryInterface interface {
 	CountCoordinateTree(ctx context.Context, input CountCoordinateTreeInput) (output CountCoordinateTreeOutput, err error)
 	GetPrevNextTree(ctx context.Context, input GetPrevNextTreeInput) (output GetPrevNextTreeOutput, err error)
 	CreateTree(ctx context.Context, input CreateTreeInput) (err error)
+	GetHeightEstateTrees(ctx context.Context, input GetHeightEstateTreesInput) (output GetHeightEstateTreesOutput, err error)
+	StoreMedianEstate(ctx context.Context, input StoreMedianEstateInput) (err error)
 }
