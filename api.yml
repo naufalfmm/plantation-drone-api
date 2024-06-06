@@ -125,6 +125,10 @@ paths:
         required: true
         schema:
           type: string
+      - name: max_distance
+        in: query
+        schema:
+          type: integer
       responses:
         '200':
           description: Successfully Get

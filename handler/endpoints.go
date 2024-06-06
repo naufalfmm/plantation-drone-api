@@ -211,7 +211,7 @@ func (s *Server) GetEstateIdStats(ctx echo.Context, id string) error {
 
 // The endpoint of retrieving the estate drone plan
 // (GET /estate/{id}/drone-plan)
-func (s *Server) GetEstateIdDronePlan(ctx echo.Context, id string) error {
+func (s *Server) GetEstateIdDronePlan(ctx echo.Context, id string, params generated.GetEstateIdDronePlanParams) error {
 	est, err := s.Repository.GetEstateById(ctx.Request().Context(), repository.GetEstateByIdInput{
 		Id: id,
 	})
@@ -231,3 +231,19 @@ func (s *Server) GetEstateIdDronePlan(ctx echo.Context, id string) error {
 		Distance: est.DroneDistance,
 	})
 }
+
+// func (s *Server) getRestEstateIdDronePlan(ctx echo.Context, id string, length, maxDistance int) (x int, y int, err error) {
+// 	estTrees, err := s.Repository.GetAllEstateTrees(ctx.Request().Context(), repository.GetAllEstateTreesInput{
+// 		EstateId: id,
+// 		Orders:   []string{"y", "x"},
+// 		Limit:    int((maxDistance-2)/10) + 1,
+// 	})
+// 	if err != nil {
+// 		return
+// 	}
+
+// 	for _, estTree := range estTrees.EstateTrees {
+// 	}
+
+// 	return
+// }

@@ -74,3 +74,20 @@ type StoreMedianEstateInput struct {
 	EstateId string
 	Median   float64
 }
+
+type GetAllEstateTreesInput struct {
+	EstateId string
+
+	Orders []string
+	Limit  int
+}
+
+type EstateTreeOutput struct {
+	X      int
+	Y      int
+	Height int
+}
+
+type GetAllEstateTreesOutput struct {
+	EstateTrees []EstateTreeOutput
+}
