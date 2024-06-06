@@ -32,9 +32,44 @@ paths:
           content:
             application/json:    
               schema:
-                $ref: "#/components/schemas/CreateEstateResponse"
+                $ref: "#/components/schemas/UuidResponse"
         '400':
           description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  
+  /estate/{id}/tree:
+    post:
+      summary: The endpoint of storing tree in specific point of the estate
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Successfully Created
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/UuidResponse"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
@@ -92,7 +127,7 @@ components:
         message:
           type: string
           example: Hello, World!
-    CreateEstateResponse:
+    UuidResponse:
       type: object
       required:
         - id

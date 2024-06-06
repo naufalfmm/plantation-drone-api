@@ -45,7 +45,7 @@ func (s *Server) PostEstate(ctx echo.Context) error {
 		})
 	}
 
-	return ctx.JSON(http.StatusCreated, generated.CreateEstateResponse{
+	return ctx.JSON(http.StatusCreated, generated.UuidResponse{
 		Id: id,
 	})
 }
