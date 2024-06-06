@@ -41,12 +41,6 @@ func (s *Server) PostEstate(ctx echo.Context) error {
 		})
 	}
 
-	if err := ctx.Validate(req); err != nil {
-		return ctx.JSON(http.StatusBadRequest, generated.ErrorResponse{
-			Message: err.Error(),
-		})
-	}
-
 	id := uuid.New().String()
 	err := s.Repository.CreateEstate(ctx.Request().Context(), repository.CreateEstateInput{
 		Id:     id,
@@ -183,7 +177,6 @@ func (s *Server) GetEstateIdStats(ctx echo.Context, id string) error {
 
 	median := est.Median
 	if median == 0 {
-
 		treeHeights, err := s.Repository.GetHeightEstateTrees(ctx.Request().Context(), repository.GetHeightEstateTreesInput{
 			EstateId: id,
 		})
@@ -195,13 +188,13 @@ func (s *Server) GetEstateIdStats(ctx echo.Context, id string) error {
 
 		median = findMedian(treeHeights.Heights)
 
-		go s.Repository.StoreMedianEstate(ctx.Request().Context(), repository.StoreMedianEstateInput{
+		s.Repository.StoreMedianEstate(ctx.Request().Context(), repository.StoreMedianEstateInput{
 			EstateId: id,
 			Median:   median,
 		})
 	}
 
-	return ctx.JSON(http.StatusCreated, generated.EstateStatResponse{
+	return ctx.JSON(http.StatusOK, generated.EstateStatResponse{
 		Count:  est.Count,
 		Max:    est.Max,
 		Median: median,
@@ -227,7 +220,7 @@ func (s *Server) GetEstateIdDronePlan(ctx echo.Context, id string, params genera
 		})
 	}
 
-	return ctx.JSON(http.StatusCreated, generated.EstateDronePlanResponse{
+	return ctx.JSON(http.StatusOK, generated.EstateDronePlanResponse{
 		Distance: est.DroneDistance,
 	})
 }

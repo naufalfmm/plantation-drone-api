@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-const ApiUrl = "http://localhost:8080"
+const ApiUrl = "http://localhost:1323"
 
 func TestApi(t *testing.T) {
 	if testing.Short() {
@@ -281,7 +281,7 @@ func ExpectGetDronePlanOk(distance int) ExpectFunc {
 }
 
 func RequireReturnIsUUID(t *testing.T, resp *http.Response, data map[string]any) {
-	require.Equal(t, http.StatusOK, resp.StatusCode)
+	require.Equal(t, http.StatusCreated, resp.StatusCode)
 	RequireIsUUID(t, data["id"].(string))
 }
 
