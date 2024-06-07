@@ -14,5 +14,4 @@ type RepositoryInterface interface {
 	CreateTree(ctx context.Context, input CreateTreeInput) (err error)
 	GetHeightEstateTrees(ctx context.Context, input GetHeightEstateTreesInput) (output GetHeightEstateTreesOutput, err error)
 	StoreMedianEstate(ctx context.Context, input StoreMedianEstateInput) (err error)
-	// GetAllEstateTrees(ctx context.Context, input GetAllEstateTreesInput) (output GetAllEstateTreesOutput, err error)
 }

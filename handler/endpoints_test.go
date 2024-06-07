@@ -1368,7 +1368,7 @@ func TestGetEstateIdStats(t *testing.T) {
 	})
 }
 
-func TestGetIdDronePlan(t *testing.T) {
+func TestGetEstateIdDronePlan(t *testing.T) {
 	t.Run("Return 200", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
@@ -1394,7 +1394,7 @@ func TestGetIdDronePlan(t *testing.T) {
 			Id: id,
 		}).Return(estRep, nil)
 
-		err := server.GetEstateIdDronePlan(ec, id, generated.GetEstateIdDronePlanParams{})
+		err := server.GetEstateIdDronePlan(ec, id)
 
 		resp := readJson[generated.EstateDronePlanResponse](t, resRecorder.Result())
 
@@ -1433,7 +1433,7 @@ func TestGetIdDronePlan(t *testing.T) {
 			Id: id,
 		}).Return(estRep, errAny)
 
-		err := server.GetEstateIdDronePlan(ec, id, generated.GetEstateIdDronePlanParams{})
+		err := server.GetEstateIdDronePlan(ec, id)
 
 		resp := readJsonResult(t, resRecorder.Result())
 
@@ -1470,7 +1470,7 @@ func TestGetIdDronePlan(t *testing.T) {
 			Id: id,
 		}).Return(estRep, sql.ErrNoRows)
 
-		err := server.GetEstateIdDronePlan(ec, id, generated.GetEstateIdDronePlanParams{})
+		err := server.GetEstateIdDronePlan(ec, id)
 
 		resp := readJsonResult(t, resRecorder.Result())
 
