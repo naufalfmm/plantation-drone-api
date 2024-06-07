@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"fmt"
 )
 
 func (r *Repository) CreateEstate(ctx context.Context, input CreateEstateInput) (err error) {
@@ -75,16 +74,16 @@ func (r *Repository) CreateTree(ctx context.Context, input CreateTreeInput) (err
 			updated_at = NOW()
 		WHERE id = $3
 	`, input.Height, input.DroneDistFactor, input.EstateId)
-	rows.Close()
 	if err != nil {
 		return
 	}
+	rows.Close()
 
 	rows, err = tx.QueryContext(ctx, `INSERT INTO estate_trees (id, estate_id, x, y, height, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, NOW(), NOW())`, input.Id, input.EstateId, input.X, input.Y, input.Height)
-	rows.Close()
 	if err != nil {
 		return
 	}
+	rows.Close()
 
 	err = tx.Commit()
 	if err != nil {
@@ -122,62 +121,62 @@ func (r *Repository) StoreMedianEstate(ctx context.Context, input StoreMedianEst
 	return
 }
 
-func (r *Repository) GetAllEstateTrees(ctx context.Context, input GetAllEstateTreesInput) (output GetAllEstateTreesOutput, err error) {
-	orderMap := map[string]string{
-		"x": "x",
-		"y": "y",
-	}
+// func (r *Repository) GetAllEstateTrees(ctx context.Context, input GetAllEstateTreesInput) (output GetAllEstateTreesOutput, err error) {
+// 	orderMap := map[string]string{
+// 		"x": "x",
+// 		"y": "y",
+// 	}
 
-	sq := `SELECT x, y, height FROM estate_trees`
+// 	sq := `SELECT x, y, height FROM estate_trees`
 
-	param := 1
-	args := []any{}
-	if input.EstateId != "" {
-		sq = fmt.Sprintf("%s WHERE estate_id = $%d", sq, param)
-		args = append(args, input.EstateId)
-		param++
-	}
+// 	param := 1
+// 	args := []any{}
+// 	if input.EstateId != "" {
+// 		sq = fmt.Sprintf("%s WHERE estate_id = $%d", sq, param)
+// 		args = append(args, input.EstateId)
+// 		param++
+// 	}
 
-	orderExist := false
-	for _, order := range input.Orders {
-		keyword := "ASC"
-		if order[0] == '-' {
-			keyword = "DESC"
-			order = order[1:]
-		}
+// 	orderExist := false
+// 	for _, order := range input.Orders {
+// 		keyword := "ASC"
+// 		if order[0] == '-' {
+// 			keyword = "DESC"
+// 			order = order[1:]
+// 		}
 
-		if _, ok := orderMap[order]; !ok {
-			continue
-		}
+// 		if _, ok := orderMap[order]; !ok {
+// 			continue
+// 		}
 
-		if !orderExist {
-			sq = fmt.Sprintf("%s ORDER BY %s %s", sq, orderMap[order], keyword)
-			orderExist = true
-			continue
-		}
+// 		if !orderExist {
+// 			sq = fmt.Sprintf("%s ORDER BY %s %s", sq, orderMap[order], keyword)
+// 			orderExist = true
+// 			continue
+// 		}
 
-		sq = fmt.Sprintf(", %s %s %s,", sq, orderMap[order], keyword)
-	}
+// 		sq = fmt.Sprintf(", %s %s %s,", sq, orderMap[order], keyword)
+// 	}
 
-	if input.Limit > 0 {
-		sq = fmt.Sprintf("%s LIMIT $%d", sq, param)
-		args = append(args, input.Limit)
-	}
+// 	if input.Limit > 0 {
+// 		sq = fmt.Sprintf("%s LIMIT $%d", sq, param)
+// 		args = append(args, input.Limit)
+// 	}
 
-	rows, err := r.Db.QueryContext(ctx, sq, args...)
-	if err != nil {
-		return
-	}
+// 	rows, err := r.Db.QueryContext(ctx, sq, args...)
+// 	if err != nil {
+// 		return
+// 	}
 
-	for rows.Next() {
-		et := EstateTreeOutput{}
-		err = rows.Scan(&et.X, &et.Y, &et.Height)
-		if err != nil {
-			return
-		}
+// 	for rows.Next() {
+// 		et := EstateTreeOutput{}
+// 		err = rows.Scan(&et.X, &et.Y, &et.Height)
+// 		if err != nil {
+// 			return
+// 		}
 
-		output.EstateTrees = append(output.EstateTrees, et)
-	}
+// 		output.EstateTrees = append(output.EstateTrees, et)
+// 	}
 
-	return
-}
+// 	return
+// }

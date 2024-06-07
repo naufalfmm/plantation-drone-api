@@ -2,25 +2,20 @@
 package repository
 
 import (
-	"database/sql"
-
 	_ "github.com/lib/pq"
+	"github.com/naufalfmm/plantation-drone-api/utils/db"
 )
 
 type Repository struct {
-	Db *sql.DB
+	Db db.DB
 }
 
 type NewRepositoryOptions struct {
-	Dsn string
+	Db db.DB
 }
 
 func NewRepository(opts NewRepositoryOptions) *Repository {
-	db, err := sql.Open("postgres", opts.Dsn)
-	if err != nil {
-		panic(err)
-	}
 	return &Repository{
-		Db: db,
+		Db: opts.Db,
 	}
 }
