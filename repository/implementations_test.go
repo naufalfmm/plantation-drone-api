@@ -209,21 +209,36 @@ func TestGetPrevNextTree(t *testing.T) {
 			NextY: 1,
 		}
 
-		expOutput := GetPrevNextTreeOutput{}
+		expOutput := GetPrevNextTreeOutput{
+			PrevTreeHeight: 10,
+			NextTreeHeight: 15,
+		}
 
 		ctx := context.Background()
 
 		var x, y, height int
 		mockDb.EXPECT().QueryContext(ctx, `SELECT x, y, height FROM estate_trees WHERE (x = $1 AND y = $2) OR (x = $3 AND y = $4) LIMIT 2`, input.PrevX, input.PrevY, input.NextX, input.NextY).Return(mockRows, nil)
 		mockRows.EXPECT().Next().Return(true)
-		mockRows.EXPECT().Scan(&x, &y, &height).Return(nil)
+		mockRows.EXPECT().Scan(&x, &y, &height).DoAndReturn(func(args ...interface{}) interface{} {
+			*(args[0].(*int)) = input.PrevX
+			*(args[1].(*int)) = input.PrevY
+			*(args[2].(*int)) = expOutput.PrevTreeHeight
+
+			return nil
+		})
 		mockRows.EXPECT().Next().Return(true)
-		mockRows.EXPECT().Scan(&x, &y, &height).Return(nil)
+		mockRows.EXPECT().Scan(&x, &y, &height).DoAndReturn(func(args ...interface{}) interface{} {
+			*(args[0].(*int)) = input.NextX
+			*(args[1].(*int)) = input.NextY
+			*(args[2].(*int)) = expOutput.NextTreeHeight
+
+			return nil
+		})
 		mockRows.EXPECT().Next().Return(false)
 
 		output, err := repo.GetPrevNextTree(ctx, input)
 
-		assert.Nil(t, err)
+		assert.NoError(t, err)
 		assert.Equal(t, expOutput, output)
 	})
 
